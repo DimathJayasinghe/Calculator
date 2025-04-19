@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            align-content: center;
+        }
+        div{
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+        }
+        button {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #2b00ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #resultInput {
+            width: 100%;
+            height: 50px;
+            font-size: 20px;
+            text-align: right;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }   
+        .reset {
+            width: 100%;
+            height: 50px;
+            font-size: 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .clear{
+            background-color: #ff9800;
+            color: white;
+        }
+
+    </style>
+  </head>
+  <body>
+    <div>
+        <h1 class="header">Simple Calculator</h1>
+        <table>
+          <tr>
+            <td colspan="4">
+              <input type="text" name="result" id="resultInput" disabled />
+            </td>
+          </tr>
+          <tr>
+            <td><button onclick="appendToResult('7')">7</button></td>
+            <td><button onclick="appendToResult('8')">8</button></td>
+            <td><button onclick="appendToResult('9')">9</button></td>
+            <td>
+              <button onclick="appendToResult('/')">/</button>
+            </td>
+          </tr>
+          <tr>
+            <td><button onclick="appendToResult('4')">4</button></td>
+            <td><button onclick="appendToResult('5')">5</button></td>
+            <td><button onclick="appendToResult('6')">6</button></td>
+            <td>
+              <button onclick="appendToResult('*')">*</button>
+            </td>
+          </tr>
+          <tr>
+            <td><button onclick="appendToResult('1')">1</button></td>
+            <td><button onclick="appendToResult('2')">2</button></td>
+            <td><button onclick="appendToResult('3')">3</button></td>
+            <td>
+              <button onclick="appendToResult('-')">-</button>
+            </td>
+          </tr>
+          <tr>
+            <td><button onclick="appendToResult('0')">0</button></td>
+            <td><button class="clear" onclick="clearResult()">C</button></td>
+            <td><button onclick="calculateResult()">=</button></td>
+            <td>
+              <button onclick="appendToResult('+')">+</button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4"><button class="reset" onclick="resetCalculator()">Reset</button></td>
+          </tr>
+        </table>
+    </div>
+  </body>
+  <script>
+    let operations = {
+      "+": (a, b) => {
+        return a + b;
+      },
+      "-": (a, b) => {
+        return a - b;
+      },
+      "*": (a, b) => {
+        return a * b;
+      },
+      "/": (a, b) => {
+        return a / b;
+      },
+    };
+    let queue = [];
+    let currentNumber = "";
+
+    function appendToResult(value) {
+      const resultInput = document.getElementById("resultInput");
+      resultInput.value += value;
+
+      // If it's a digit, add to currentNumber
+      if (!operations[value]) {
+        currentNumber += value;
+      } else {
+        // If it's an operation, push the current number and then the operation
+        if (currentNumber !== "") {
+          queue.push(currentNumber);
+          currentNumber = "";
+        }
+        queue.push(value);
+      }
+    }
+
+    function calculateResult() {
+      const resultInput = document.getElementById("resultInput");
+
+      // Push the last number if present
+      if (currentNumber !== "") {
+        queue.push(currentNumber);
+        currentNumber = "";
+      }
+
+      if (queue.length < 3) {
+        return;
+      }
+
+      let result = parseFloat(queue[0]);
+
+      for (let i = 1; i < queue.length - 1; i += 2) {
+        const op = queue[i];
+        const b = parseFloat(queue[i + 1]);
+
+        if (operations[op] && !isNaN(b)) {
+          result = operations[op](result, b);
+        }
+      }
+
+      resultInput.value = result;
+      queue = [result.toString()];
+    }
+
+    function clearResult() {
+      const resultInput = document.getElementById("resultInput");
+      resultInput.value = "";
+      queue = [];
+      currentNumber = "";
+    }
+
+    function resetCalculator() {
+      clearResult();
+    }
+  </script>
+</html>
